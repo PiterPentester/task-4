@@ -11,5 +11,4 @@ RUN apt-get update && apt-get upgrade -y \
   && apt-get clean
 
 EXPOSE 80
-#ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
-CMD ["bash"]
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
