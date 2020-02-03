@@ -23,8 +23,8 @@ ENV PHP_MOD php-fpm \
  
 ENV SOFT curl \
   supervisor \
-  wget \
-  nginx
+  nginx \
+  wget
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
   && yum install epel-release -y \
