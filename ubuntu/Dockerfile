@@ -13,7 +13,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
   && apt update -y \
   && apt install software-properties-common -y \
   && add-apt-repository ppa:ondrej/php -y \
-  && apt-get update -y \
   && apt-get install ${SOFT} -y \
   && sed -i 's+/run/php/php7.3-fpm.sock+127.0.0.1:9000+g' /etc/php/7.3/fpm/pool.d/www.conf \
   && apt-get clean \
