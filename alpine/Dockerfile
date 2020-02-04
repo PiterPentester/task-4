@@ -27,17 +27,18 @@ ENV PHP_MOD php${PHP_V} \
 RUN apk update \
   && apk --no-cache add ${SOFT} ${PHP_MOD} \
   && mkdir -p /run/nginx/ \
-  && chown -R nobody.nobody /run \
-  && chown -R nobody.nobody /var/lib/nginx \
-  && chown -R nobody.nobody /var/tmp/nginx \
-  && chown -R nobody.nobody /var/log/nginx
+  && chown -R nobody:nobody /run \
+  && chown -R nobody:nobody /var/lib/nginx \
+  && chown -R nobody:nobody /var/tmp/nginx \
+  && chown -R nobody:nobody /var/log/nginx \
+  && chown -R nobody:nobody /var/log/php7
 
 COPY --chown=nobody test.php /var/www/localhost/htdocs/
 COPY --chown=nobody nginx.conf /etc/nginx/conf.d/default.conf
 COPY --chown=nobody supervisord.conf /
 
-#USER nobody
+USER nobody
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/supervisord.conf"]

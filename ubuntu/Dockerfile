@@ -10,17 +10,29 @@ ENV SOFT nginx \
  
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
-  && apt update -y \
-  && apt install software-properties-common -y \
+  && apt-get update -y && apt-get upgrade -y \
+  && apt-get install --no-install-recommends software-properties-common -y \
   && add-apt-repository ppa:ondrej/php -y \
-  && apt-get install ${SOFT} -y \
+  && apt-get install --no-install-recommends ${SOFT} -y \
   && sed -i 's+/run/php/php7.3-fpm.sock+127.0.0.1:9000+g' /etc/php/7.3/fpm/pool.d/www.conf \
+  && sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/7.3/fpm/php-fpm.conf \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && groupadd -g 1000 user \
+  && useradd -s /bin/bash -d /home/user/ -u 1000 -g 1000 user \
+  && mkdir /home/user/ \
+  && mkdir /run/php \
+  && chown -R user:user /home/user \
+  && chown -R user:user /run \
+  && chown -R user:user /var/lib/nginx \
+  && chown -R user:user /var/log/ \
+  && chown -R user:user /etc/php/7.3/fpm/php-fpm.conf
 
-COPY default /etc/nginx/sites-available/
-COPY test.php /var/www/html/
-COPY supervisord.conf /
+COPY --chown=user default /etc/nginx/sites-available/
+COPY --chown=user test.php /var/www/html/
+COPY --chown=user supervisord.conf /home/user
 
-EXPOSE 80
-ENTRYPOINT ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+EXPOSE 8080
+
+USER user
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/home/user/supervisord.conf"]

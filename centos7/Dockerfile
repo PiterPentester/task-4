@@ -4,27 +4,10 @@ FROM centos:centos7
 
 ENV TZ=Europe/Kiev
 ENV PHP_V 73
-ENV PHP_MOD php-fpm \
-  php-common \
-  php-mysql \
-  php-xml \
-  php-xmlrpc \
-  php-curl \
-  php-gd \
-  php-imagick \
-  php-cli \
-  php-dev \
-  php-imap \
-  php-mbstring \
-  php-opcache \
-  php-soap \
-  php-zip \
-  php-intl
+ENV PHP_MOD php-fpm
  
-ENV SOFT curl \
-  supervisor \
-  nginx \
-  wget
+ENV SOFT supervisor \
+  nginx
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
   && yum install epel-release -y \
@@ -33,7 +16,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
   && yum --enablerepo=remi-php${PHP_V} install -y ${PHP_MOD} \
   && yum install ${SOFT} -y \
   && mkdir -p /run/php-fpm/ \
-  && yum clean all -y
+  && yum clean all -y \
+  && rm -rf /var/cache/yum 
 
 COPY nginx.conf /etc/nginx/
 COPY supervisord.conf /
